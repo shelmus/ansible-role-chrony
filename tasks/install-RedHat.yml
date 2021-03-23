@@ -1,0 +1,32 @@
+---
+# RedHat based systems
+# TODO: change to raw scripts to get around libselinux issues
+# - name: Configure ntp for RHEL5
+#   template:
+#     src: templates/ntp.conf.j2
+#     dest: /etc/ntp.conf
+#   when: ansible_facts['os_family'] == "RedHat" and ansible_facts['distribution_major_version'] == "5"
+#   notify: restart_ntpd
+
+- name: Update yum cache
+  package: update_cache=yes
+  when: (ansible_facts['os_family'] == "RedHat" and ansible_facts['distribution_major_version'] == "6") or
+        (ansible_facts['os_family'] == "RedHat" and ansible_facts['distribution_major_version'] == "7")
+
+- name: Ensure ntp is uninstalled
+  package: name=ntp state=absent
+  when: (ansible_facts['os_family'] == "RedHat" and ansible_facts['distribution_major_version'] == "6") or
+        (ansible_facts['os_family'] == "RedHat" and ansible_facts['distribution_major_version'] == "7")
+
+- name: Ensure chrony is installed
+  package: name=chrony state=present
+  when: (ansible_facts['os_family'] == "RedHat" and ansible_facts['distribution_major_version'] == "6") or
+        (ansible_facts['os_family'] == "RedHat" and ansible_facts['distribution_major_version'] == "7")
+
+- name: Configure chrony
+  template:
+    src: templates/chrony.conf.j2
+    dest: /etc/chrony.conf
+  when: (ansible_facts['os_family'] == "RedHat" and ansible_facts['distribution_major_version'] == "6") or
+        (ansible_facts['os_family'] == "RedHat" and ansible_facts['distribution_major_version'] == "7")
+  notify: restart_chronyd

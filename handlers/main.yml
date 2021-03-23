@@ -1,0 +1,11 @@
+---
+# handlers file for fusion.chrony
+- name: restart_chronyd
+  service:
+    name: "{{ chrony_service }}"
+    state: restarted
+
+- name: restart_ntpd
+  service:
+    name: ntpd
+    state: restarted

@@ -1,0 +1,20 @@
+---
+# Debian based systems
+- name: Update cache
+  apt: update_cache=yes cache_valid_time=3600
+
+- name: Ensure ntp is removed
+  apt:
+    name: ntp
+    state: absent
+
+- name: Ensure chrony is installed
+  apt:
+    name: chrony
+    state: present
+
+- name: Configure chrony
+  template:
+    src: templates/chrony.conf.j2
+    dest: /etc/chrony.conf
+  notify: restart_chronyd
